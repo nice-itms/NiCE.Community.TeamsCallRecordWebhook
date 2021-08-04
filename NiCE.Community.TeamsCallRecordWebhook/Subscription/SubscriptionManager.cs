@@ -8,7 +8,6 @@ namespace NiCE.Community.TeamsCallRecordWebhook.Subscription
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Text.Json;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Http;
@@ -27,7 +26,9 @@ namespace NiCE.Community.TeamsCallRecordWebhook.Subscription
     public class SubscriptionManager : ISubscriptionManager, IAsyncDisposable
     {
         private const int RenewIntervalSeconds = 60 * 10; // 10 minutes
-        private const int SubscriptionExpirationTimeInSeconds = 4230 * 60;
+
+        // Maximum expiration time: https://docs.microsoft.com/en-us/graph/api/resources/subscription?view=graph-rest-1.0&viewFallbackFrom=graph-rest-v1.0#maximum-length-of-subscription-per-resource-type
+        private const int SubscriptionExpirationTimeInSeconds = 60 * 60;
 
         private readonly ILogger<SubscriptionManager> logger;
 
@@ -168,12 +169,6 @@ namespace NiCE.Community.TeamsCallRecordWebhook.Subscription
                                     this.logger.LogError("Can't get the callRecordId", dataType);
                                 }
 
-                                break;
-                            }
-
-                        default:
-                            {
-                                this.logger.LogInformation("Receive Change Notification: {ChangeNotification}", JsonSerializer.Serialize(changeNotification));
                                 break;
                             }
                     }
