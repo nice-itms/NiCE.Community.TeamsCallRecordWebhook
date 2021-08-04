@@ -8,6 +8,7 @@ namespace NiCE.Community.TeamsCallRecordWebhook.Subscription
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Text.Json;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Http;
@@ -145,7 +146,6 @@ namespace NiCE.Community.TeamsCallRecordWebhook.Subscription
 
                 if (changeNotification.ResourceData is null || changeNotification.TenantId is null)
                 {
-                    // TODO: log message
                     this.logger.LogInformation("Missing ResourceData or TenantId");
                     continue;
                 }
@@ -168,6 +168,12 @@ namespace NiCE.Community.TeamsCallRecordWebhook.Subscription
                                     this.logger.LogError("Can't get the callRecordId", dataType);
                                 }
 
+                                break;
+                            }
+
+                        default:
+                            {
+                                this.logger.LogInformation("Receive Change Notification: {ChangeNotification}", JsonSerializer.Serialize(changeNotification));
                                 break;
                             }
                     }
